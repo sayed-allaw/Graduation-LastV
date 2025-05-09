@@ -60,17 +60,17 @@ export const DataProvider = ({ children }) => {
   const [users, setUsers] = useState([
     {
       id: 1,
-      name: "Ahmed Mohamed",
-      email: "ahmed@example.com",
+      name: "Elsayed Allaw ",
+      email: "sayedallaw@gmail.com",
       status: "Active",
-      joined: "2025-01-01",
+      joined: "2025-04-07",
     },
     {
       id: 2,
-      name: "Sara Ali",
-      email: "sara@example.com",
+      name: "Test ",
+      email: "test@example.com",
       status: "Inactive",
-      joined: "2025-02-01",
+      joined: "2025-05-05",
     },
   ]);
 

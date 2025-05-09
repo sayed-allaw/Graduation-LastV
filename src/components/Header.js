@@ -18,8 +18,13 @@ const Header = ({ toggleSidebar }) => {
 
   // Logout
   const handleLogout = () => {
-    logout();
-    navigate("/welcome");
+    const success = logout();
+    if (success) {
+      // Add a small delay to ensure state is updated before redirecting
+      setTimeout(() => {
+        navigate("/welcome");
+      }, 100);
+    }
   };
 
   return (

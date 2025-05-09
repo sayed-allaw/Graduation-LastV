@@ -505,6 +505,53 @@ body {
   line-height: 1;
 }
 
+/* Responsive Tables for Mobile */
+.reports-table {
+  width: 100%;
+}
+
+@media (max-width: 767px) {
+  .reports-table thead {
+    display: none;
+  }
+
+  .reports-table tbody tr {
+    display: block;
+    margin-bottom: 1rem;
+    border: 1px solid var(--gray-300);
+    border-radius: var(--border-radius);
+    padding: 0.5rem;
+    background-color: white;
+  }
+
+  .reports-table tbody td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--gray-200);
+    padding: 0.75rem;
+  }
+
+  .reports-table tbody td:last-child {
+    border-bottom: none;
+  }
+
+  .reports-table tbody td:before {
+    content: attr(data-label);
+    font-weight: 600;
+    margin-right: 1rem;
+    min-width: 120px;
+  }
+
+  .reports-table .actions-cell {
+    justify-content: flex-start;
+  }
+
+  .reports-table .actions-cell:before {
+    content: "Actions";
+  }
+}
+
 /* Responsive - Enhanced for all devices */
 @media (max-width: 1200px) {
   .row > [class*="col-"] {

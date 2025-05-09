@@ -162,6 +162,7 @@ const Welcome = () => {
                           <Link
                             to="/login"
                             className="text-primary fw-bold text-decoration-none"
+                            aria-label="Learn more about damage detection"
                           >
                             Discover More{" "}
                             <i className="bi bi-arrow-right ms-1"></i>
@@ -198,6 +199,7 @@ const Welcome = () => {
                           <Link
                             to="/login"
                             className="text-success fw-bold text-decoration-none"
+                            aria-label="Learn more about location tracking"
                           >
                             Discover More{" "}
                             <i className="bi bi-arrow-right ms-1"></i>
@@ -234,6 +236,7 @@ const Welcome = () => {
                           <Link
                             to="/login"
                             className="text-info fw-bold text-decoration-none"
+                            aria-label="Learn more about reports and statistics"
                           >
                             Discover More{" "}
                             <i className="bi bi-arrow-right ms-1"></i>

@@ -61,15 +61,23 @@ export const AuthProvider = ({ children }) => {
 
   // Logout
   const logout = () => {
-    setUser(null);
-    setIsLoggedIn(false);
-    setIsAdmin(false);
-    localStorage.removeItem("isLoggedIn");
-    localStorage.removeItem("userRole");
-    // We don't remove username and password to allow logging in again
+    try {
+      // Clear login status from localStorage first
+      localStorage.removeItem("isLoggedIn");
+      localStorage.removeItem("userRole");
+      // We don't remove username and password to allow logging in again
 
-    // Add a slight delay to ensure state is updated before redirecting
-    return true;
+      // Then update state
+      setUser(null);
+      setIsLoggedIn(false);
+      setIsAdmin(false);
+
+      console.log("Logged out successfully");
+      return true;
+    } catch (error) {
+      console.error("Error during logout:", error);
+      return false;
+    }
   };
 
   // Sign up

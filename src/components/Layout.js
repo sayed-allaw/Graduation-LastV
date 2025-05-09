@@ -2,17 +2,24 @@ import React, { useState, useEffect } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import Header from "./Header";
-import { useAuth } from "../context/AuthContext";
+// useAuth is no longer needed here
 
-const Layout = ({ title }) => {
-  const { isLoggedIn } = useAuth();
+const Layout = () => {
+  // No need to check isLoggedIn here
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const location = useLocation();
 
   // Page title
   const getPageTitle = () => {
-    return "Trackon";
+    const path = location.pathname.split("/").pop();
+    const title = path.charAt(0).toUpperCase() + path.slice(1);
+    return title || "Dashboard";
   };
+
+  // Update document title when route changes
+  useEffect(() => {
+    document.title = `Trackon - ${getPageTitle()}`;
+  }, [location.pathname]);
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
@@ -23,9 +30,7 @@ const Layout = ({ title }) => {
     setSidebarOpen(true);
   }, [location.pathname]);
 
-  if (!isLoggedIn) {
-    return <Outlet />;
-  }
+  // isLoggedIn check is now handled by ProtectedRoute
 
   return (
     <div className="app-container">

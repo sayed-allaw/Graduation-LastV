@@ -10,8 +10,13 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
 
   const handleLogout = (e) => {
     e.preventDefault();
-    logout();
-    navigate("/welcome");
+    const success = logout();
+    if (success) {
+      // Add a small delay to ensure state is updated before redirecting
+      setTimeout(() => {
+        navigate("/welcome");
+      }, 100);
+    }
   };
 
   return (
@@ -41,7 +46,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
       <ul className="nav flex-column mt-4">
         <li className="nav-item mb-3">
           <NavLink
-            to="/dashboard"
+            to="/app/dashboard"
             className={({ isActive }) =>
               `nav-link ${isActive ? "active" : ""} rounded py-3 px-3`
             }
@@ -52,7 +57,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
         </li>
         <li className="nav-item mb-3">
           <NavLink
-            to="/reports"
+            to="/app/reports"
             className={({ isActive }) =>
               `nav-link ${isActive ? "active" : ""} rounded py-3 px-3`
             }
@@ -63,7 +68,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
         </li>
         <li className="nav-item mb-3">
           <NavLink
-            to="/users"
+            to="/app/users"
             className={({ isActive }) =>
               `nav-link ${isActive ? "active" : ""} rounded py-3 px-3`
             }
@@ -74,7 +79,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
         </li>
         <li className="nav-item mb-3">
           <NavLink
-            to="/statistics"
+            to="/app/statistics"
             className={({ isActive }) =>
               `nav-link ${isActive ? "active" : ""} rounded py-3 px-3`
             }
@@ -85,7 +90,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
         </li>
         <li className="nav-item mb-3">
           <NavLink
-            to="/settings"
+            to="/app/settings"
             className={({ isActive }) =>
               `nav-link ${isActive ? "active" : ""} rounded py-3 px-3`
             }

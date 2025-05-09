@@ -13,14 +13,18 @@ import {
 } from "react-bootstrap";
 import { GoogleMap, useJsApiLoader, Marker } from "@react-google-maps/api";
 import { useData } from "../context/DataContext";
-import { useAuth } from "../context/AuthContext";
 
 const ReportDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { reports, editReport, updateReportStatus, addNotification } =
-    useData();
-  const { isAdmin } = useAuth();
+  const {
+    reports,
+    editReport,
+    updateReportStatus,
+    addNotification,
+    deleteReport,
+  } = useData();
+  // No longer need auth check as all users can access these features
 
   // حالة التقرير
   const [report, setReport] = useState(null);
@@ -48,19 +52,49 @@ const ReportDetails = () => {
 
   // تحميل بيانات التقرير
   useEffect(() => {
-    if (id) {
+    // Clear any previous errors
+    setError("");
+    setLoading(true);
+
+    if (!id) {
+      setError("No report ID provided");
+      setLoading(false);
+      return;
+    }
+
+    try {
+      // Make sure to convert the ID to a number since URL parameters are strings
       const reportId = parseInt(id);
-      const foundReport = reports.find((r) => r.id === reportId);
+
+      if (isNaN(reportId)) {
+        setError(`Invalid report ID: ${id}`);
+        setLoading(false);
+        return;
+      }
+
+      // Find the report with matching ID - ensure we're comparing numbers with numbers
+      // Convert all report IDs to numbers for comparison
+      const foundReport = reports.find((r) => {
+        const rId = parseInt(r.id);
+        return rId === reportId;
+      });
 
       if (foundReport) {
+        // Set report data
         setReport(foundReport);
 
-        // تحميل التعليقات من التخزين المحلي
-        const storedComments =
-          JSON.parse(localStorage.getItem(`report_comments_${reportId}`)) || [];
-        setComments(storedComments);
+        // Load comments from local storage
+        try {
+          const storedComments =
+            JSON.parse(localStorage.getItem(`report_comments_${reportId}`)) ||
+            [];
+          setComments(storedComments);
+        } catch (storageError) {
+          console.error("Error loading comments from storage:", storageError);
+          setComments([]);
+        }
 
-        // تعيين قيم نموذج التحرير
+        // Set edit form values
         setEditForm({
           location: foundReport.location,
           type: foundReport.type,
@@ -70,9 +104,14 @@ const ReportDetails = () => {
 
         setLoading(false);
       } else {
-        setError("Report not found ");
+        setError(
+          `Report with ID ${reportId} not found. Please check if the report exists.`
+        );
         setLoading(false);
       }
+    } catch (error) {
+      setError("Error loading report: " + error.message);
+      setLoading(false);
     }
   }, [id, reports]);
 
@@ -102,7 +141,9 @@ const ReportDetails = () => {
       setNewComment("");
 
       // إضافة إشعار
-      addNotification(`A new comment has been added to the report.#${report.id}`);
+      addNotification(
+        `A new comment has been added to the report.#${report.id}`
+      );
     }
   };
 
@@ -163,7 +204,27 @@ const ReportDetails = () => {
 
   // Return to reports page
   const handleBack = () => {
-    navigate("/reports");
+    try {
+      navigate("/app/reports");
+    } catch (error) {
+      console.error("Error navigating back to reports:", error);
+      // Fallback to direct location change if navigate fails
+      window.location.href = "/app/reports";
+    }
+  };
+
+  // Delete report
+  const handleDeleteReport = () => {
+    if (
+      report &&
+      window.confirm(
+        `Are you sure you want to delete the report: ${report.location}?`
+      )
+    ) {
+      deleteReport(report.id);
+      addNotification(`Report deleted: ${report.location}`);
+      navigate("/app/reports");
+    }
   };
 
   if (loading) {
@@ -181,7 +242,14 @@ const ReportDetails = () => {
   if (error) {
     return (
       <Container className="py-4">
-        <Alert variant="danger">{error}</Alert>
+        <Alert variant="danger">
+          <h4>Error</h4>
+          <p>{error}</p>
+          <p>
+            This could be because the report doesn't exist or there was a
+            problem loading it.
+          </p>
+        </Alert>
         <Button variant="primary" onClick={handleBack}>
           Back to Reports
         </Button>
@@ -257,32 +325,35 @@ const ReportDetails = () => {
                         </p>
                       )}
 
-                      {isAdmin && (
-                        <div className="mt-3">
+                      <div className="mt-3">
+                        <Button
+                          variant="primary"
+                          className="me-2"
+                          onClick={() => setIsEditing(true)}
+                        >
+                          Edit Report
+                        </Button>
+                        {report.status === "Pending" ? (
                           <Button
-                            variant="primary"
+                            variant="success"
                             className="me-2"
-                            onClick={() => setIsEditing(true)}
+                            onClick={() => handleUpdateStatus("Resolved")}
                           >
-                            Edit Report
+                            Mark as Resolved
                           </Button>
-                          {report.status === "Pending" ? (
-                            <Button
-                              variant="success"
-                              onClick={() => handleUpdateStatus("Resolved")}
-                            >
-                              Mark as Resolved
-                            </Button>
-                          ) : (
-                            <Button
-                              variant="warning"
-                              onClick={() => handleUpdateStatus("Pending")}
-                            >
-                              Reopen
-                            </Button>
-                          )}
-                        </div>
-                      )}
+                        ) : (
+                          <Button
+                            variant="warning"
+                            className="me-2"
+                            onClick={() => handleUpdateStatus("Pending")}
+                          >
+                            Reopen
+                          </Button>
+                        )}
+                        <Button variant="danger" onClick={handleDeleteReport}>
+                          Delete Report
+                        </Button>
+                      </div>
                     </div>
                   ) : (
                     <Form>
@@ -372,23 +443,21 @@ const ReportDetails = () => {
                     )}
                   </ListGroup>
 
-                  {isAdmin && (
-                    <Form onSubmit={handleAddComment}>
-                      <Form.Group className="mb-3">
-                        <Form.Label>Add New Comment</Form.Label>
-                        <Form.Control
-                          as="textarea"
-                          rows={2}
-                          value={newComment}
-                          onChange={(e) => setNewComment(e.target.value)}
-                          required
-                        />
-                      </Form.Group>
-                      <Button variant="primary" type="submit">
-                        Add Comment
-                      </Button>
-                    </Form>
-                  )}
+                  <Form onSubmit={handleAddComment}>
+                    <Form.Group className="mb-3">
+                      <Form.Label>Add New Comment</Form.Label>
+                      <Form.Control
+                        as="textarea"
+                        rows={2}
+                        value={newComment}
+                        onChange={(e) => setNewComment(e.target.value)}
+                        required
+                      />
+                    </Form.Group>
+                    <Button variant="primary" type="submit">
+                      Add Comment
+                    </Button>
+                  </Form>
                 </Card.Body>
               </Card>
             </Col>

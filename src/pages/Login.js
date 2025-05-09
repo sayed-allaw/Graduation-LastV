@@ -34,7 +34,7 @@ const Login = () => {
     const success = login(formData.username, formData.password);
 
     if (success) {
-      navigate("/dashboard");
+      navigate("/app/dashboard");
     } else {
       setError("Invalid username or password");
     }

@@ -27,7 +27,7 @@ const imageUrls = {
   logos: {
     main: require("./logos/download.png"),
     small: require("./logos/download.png"),
-    favicon: require("./logos/download.png"),
+    favicon: require("./logos/download.ico"),
   },
 
   // Map images

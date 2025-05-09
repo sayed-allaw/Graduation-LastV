@@ -303,65 +303,7 @@ const Dashboard = () => {
           </Row>
         </motion.div>
 
-        {/* Quick Links */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.7 }}
-        >
-          <Row>
-            <Col>
-              <Card className="border-0 shadow">
-                <Card.Body className="p-4">
-                  <motion.div
-                    initial={{ x: -20, opacity: 0 }}
-                    animate={{ x: 0, opacity: 1 }}
-                    transition={{ duration: 0.5, delay: 0.1 }}
-                  >
-                    <Card.Title className="mb-4 d-flex align-items-center">
-                      <i className="bi bi-link-45deg text-primary me-2 fs-4"></i>
-                      <span className="fs-4">Quick Links</span>
-                    </Card.Title>
-                  </motion.div>
-                  <div className="d-flex flex-wrap gap-3 mt-3">
-                    <a
-                      href="/reports"
-                      className="btn btn-primary px-4 py-3"
-                      style={{ borderRadius: "12px" }}
-                    >
-                      <i className="bi bi-file-earmark-text me-2 fs-5"></i>
-                      Reports
-                    </a>
-                    <a
-                      href="/users"
-                      className="btn btn-success px-4 py-3"
-                      style={{ borderRadius: "12px" }}
-                    >
-                      <i className="bi bi-people me-2 fs-5"></i>
-                      Users
-                    </a>
-                    <a
-                      href="/statistics"
-                      className="btn btn-info text-white px-4 py-3"
-                      style={{ borderRadius: "12px" }}
-                    >
-                      <i className="bi bi-bar-chart me-2 fs-5"></i>
-                      Statistics
-                    </a>
-                    <a
-                      href="/settings"
-                      className="btn btn-secondary px-4 py-3"
-                      style={{ borderRadius: "12px" }}
-                    >
-                      <i className="bi bi-gear me-2 fs-5"></i>
-                      Settings
-                    </a>
-                  </div>
-                </Card.Body>
-              </Card>
-            </Col>
-          </Row>
-        </motion.div>
+        {/* Quick Links section has been removed */}
       </Container>
     </PageTransition>
   );

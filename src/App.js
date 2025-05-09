@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   BrowserRouter as Router,
   Routes,
   Route,
   Navigate,
+  Outlet,
 } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import { DataProvider } from "./context/DataContext";
@@ -28,28 +29,47 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 import "./assets/styles.css";
 
 function App() {
+  // Set document title
+  useEffect(() => {
+    document.title = "Trackon";
+  }, []);
+
   return (
     <AuthProvider>
       <DataProvider>
         <Router>
           <Routes>
             {/* Public pages */}
+            <Route path="/" element={<Navigate to="/welcome" replace />} />
             <Route path="/welcome" element={<Welcome />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
 
             {/* Protected pages */}
-            <Route path="/" element={<Layout />}>
-              <Route index element={<Navigate to="/dashboard" replace />} />
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/reports" element={<Reports />} />
-              <Route path="/reports/:id" element={<ReportDetails />} />
-              <Route path="/users" element={<Users />} />
-              <Route path="/statistics" element={<Statistics />} />
-              <Route path="/settings" element={<Settings />} />
+            <Route
+              path="/app"
+              element={
+                <ProtectedRoute>
+                  <Layout />
+                </ProtectedRoute>
+              }
+            >
+              <Route index element={<Navigate to="/app/dashboard" replace />} />
+              <Route path="dashboard" element={<Dashboard />} />
+              <Route path="reports" element={<Reports />} />
+              {/* Important: Order matters - specific routes must come before dynamic routes */}
+              <Route path="reports/new" element={<Reports />} />
+              <Route
+                path="reports/error"
+                element={<Navigate to="/app/reports" replace />}
+              />
+              <Route path="reports/:id" element={<ReportDetails />} />
+              <Route path="users" element={<Users />} />
+              <Route path="statistics" element={<Statistics />} />
+              <Route path="settings" element={<Settings />} />
             </Route>
 
-            {/* توجيه المسارات غير الموجودة إلى الصفحة الرئيسية */}
+            {/* Redirect non-existent routes to welcome page */}
             <Route path="*" element={<Navigate to="/welcome" replace />} />
           </Routes>
         </Router>

@@ -85,12 +85,7 @@ const Reports = () => {
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = filteredReports.slice(indexOfFirstItem, indexOfLastItem);
 
-  // View report
-  const handleViewReport = (report) => {
-    setSelectedReport(report);
-    setEditMode(false);
-    setShowModal(true);
-  };
+  // View report functionality is handled by navigateToReportDetails
 
   // Edit report
   const handleEditReport = () => {
@@ -128,7 +123,20 @@ const Reports = () => {
 
   // Navigate to report details page
   const navigateToReportDetails = (id) => {
-    navigate(`/reports/${id}`);
+    try {
+      // Convert id to number to ensure it matches the report id format
+      const reportId = parseInt(id);
+      if (!isNaN(reportId)) {
+        // Navigate to the report details page
+        navigate(`/app/reports/${reportId}`);
+      } else {
+        console.error("Invalid report ID:", id);
+        alert("Error: Invalid report ID");
+      }
+    } catch (error) {
+      console.error("Error navigating to report details:", error);
+      alert("Error navigating to report details. Please try again.");
+    }
   };
 
   // Handle report selection/deselection
@@ -269,7 +277,7 @@ const Reports = () => {
                     <Button
                       variant="primary"
                       className="me-2"
-                      onClick={() => navigate("/reports/new")}
+                      onClick={() => navigate("/app/reports/new")}
                     >
                       <i className="bi bi-plus-lg me-2"></i>
                       Add New Report
@@ -349,7 +357,7 @@ const Reports = () => {
                 </Col>
               </Row>
 
-              <Table responsive hover>
+              <Table responsive hover className="reports-table">
                 <thead className="table-dark">
                   <tr>
                     {isAdmin && (
@@ -386,22 +394,23 @@ const Reports = () => {
                             />
                           </td>
                         )}
-                        <td>{report.id}</td>
-                        <td>
-                          <a
-                            href="#"
-                            onClick={(e) => {
-                              e.preventDefault();
-                              navigateToReportDetails(report.id);
-                            }}
-                            className="text-primary"
-                          >
-                            {report.location}
-                          </a>
+                        <td data-label="ID">{report.id}</td>
+                        <td data-label="Location">
+                          <div className="d-flex align-items-center">
+                            <span className="me-2">{report.location}</span>
+                            <Button
+                              variant="outline-primary"
+                              size="sm"
+                              className="py-0 px-1"
+                              onClick={() => navigateToReportDetails(report.id)}
+                            >
+                              View
+                            </Button>
+                          </div>
                         </td>
-                        <td>{report.type}</td>
-                        <td>{report.date}</td>
-                        <td>
+                        <td data-label="Type">{report.type}</td>
+                        <td data-label="Date">{report.date}</td>
+                        <td data-label="Status">
                           <Badge
                             bg={
                               report.status === "Pending"
@@ -415,7 +424,7 @@ const Reports = () => {
                           </Badge>
                         </td>
                         {isAdmin && (
-                          <td>
+                          <td data-label="Priority">
                             <Badge
                               bg={
                                 report.priority === "High"
@@ -433,43 +442,44 @@ const Reports = () => {
                             </Badge>
                           </td>
                         )}
-                        <td>
-                          <Button
-                            variant="info"
-                            size="sm"
-                            className="me-2"
-                            onClick={() => navigateToReportDetails(report.id)}
-                          >
-                            <i className="bi bi-eye"></i>
-                          </Button>
-                          {isAdmin && (
-                            <>
-                              <Button
-                                variant="success"
-                                size="sm"
-                                className="me-2"
-                                disabled={report.status === "Resolved"}
-                                onClick={() => handleResolveReport(report.id)}
-                              >
-                                <i className="bi bi-check-lg"></i>
-                              </Button>
-                              <Button
-                                variant="danger"
-                                size="sm"
-                                onClick={() => {
-                                  if (
-                                    window.confirm(
-                                      `Are you sure you want to delete the report: ${report.location}?`
-                                    )
-                                  ) {
-                                    deleteReport(report.id);
-                                  }
-                                }}
-                              >
-                                <i className="bi bi-trash"></i>
-                              </Button>
-                            </>
-                          )}
+                        <td data-label="Actions" className="actions-cell">
+                          <div className="btn-group-sm">
+                            <Button
+                              variant="info"
+                              size="sm"
+                              className="me-2"
+                              onClick={() => navigateToReportDetails(report.id)}
+                              title="View Details"
+                            >
+                              <i className="bi bi-eye"></i>
+                            </Button>
+                            <Button
+                              variant="success"
+                              size="sm"
+                              className="me-2"
+                              disabled={report.status === "Resolved"}
+                              onClick={() => handleResolveReport(report.id)}
+                              title="Mark as Resolved"
+                            >
+                              <i className="bi bi-check-lg"></i>
+                            </Button>
+                            <Button
+                              variant="danger"
+                              size="sm"
+                              onClick={() => {
+                                if (
+                                  window.confirm(
+                                    `Are you sure you want to delete the report: ${report.location}?`
+                                  )
+                                ) {
+                                  deleteReport(report.id);
+                                }
+                              }}
+                              title="Delete Report"
+                            >
+                              <i className="bi bi-trash"></i>
+                            </Button>
+                          </div>
                         </td>
                       </tr>
                     ))
