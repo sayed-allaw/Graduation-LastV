@@ -69,7 +69,7 @@ const Dashboard = () => {
                   }}
                   transition={{ type: "spring", stiffness: 300 }}
                 >
-                  <Card className="overview-card bg-primary text-white border-0 shadow">
+                  <Card className="overview-card bg-primary-gradient text-white border-0 shadow">
                     <Card.Body className="p-4">
                       <div className="icon mb-3">
                         <i className="bi bi-exclamation-triangle-fill fs-1"></i>
